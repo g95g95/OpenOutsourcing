@@ -1,6 +1,8 @@
 import Problem from '../components/sections/Problem'
 import Solution from '../components/sections/Solution'
 import OutsourcingQuiz from '../components/sections/OutsourcingQuiz'
+import Pricing from '../components/sections/Pricing'
+import ConsultationForm from '../components/forms/ConsultationForm'
 
 function Home() {
   return (
@@ -51,13 +53,8 @@ function Home() {
         </div>
       </section>
 
-      {/* Pricing Section Placeholder */}
-      <section id="pricing" className="section-padding">
-        <div className="container-custom">
-          <h2 className="heading-2 text-center text-primary">Pricing</h2>
-          <p className="text-body text-center mt-4">Sezione in costruzione...</p>
-        </div>
-      </section>
+      {/* Pricing Section */}
+      <Pricing />
 
       {/* Public Sector Section Placeholder */}
       <section id="public-sector" className="section-padding bg-white">
@@ -67,11 +64,13 @@ function Home() {
         </div>
       </section>
 
-      {/* Contact Section Placeholder */}
-      <section id="contact" className="section-padding bg-primary text-white">
+      {/* Contact Section */}
+      <section id="contact" className="section-padding bg-primary">
         <div className="container-custom">
-          <h2 className="heading-2 text-center">Contattami</h2>
-          <p className="text-slate-300 text-center mt-4">Sezione in costruzione...</p>
+          <div className="max-w-xl mx-auto">
+            <h2 className="heading-2 text-center text-white mb-8">Inizia Ora</h2>
+            <ConsultationForm />
+          </div>
         </div>
       </section>
     </div>
