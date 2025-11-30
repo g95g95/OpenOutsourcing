@@ -34,3 +34,16 @@ export const consultationSchema = z.object({
     message: 'Devi accettare la privacy policy',
   }),
 })
+
+// Schema per richiesta consulenza gratuita
+export const freeConsultationSchema = z.object({
+  nomeCognome: z.string().min(2, 'Il nome deve avere almeno 2 caratteri'),
+  nomeAzienda: z.string().min(2, 'Il nome azienda deve avere almeno 2 caratteri'),
+  codiceAteco: z.string().optional(),
+  fasciaFatturato: z.string().min(1, 'Seleziona la fascia di fatturato'),
+  problemaIT: z.string().min(1, 'Seleziona il problema da affrontare'),
+  livelloEsternalizzazione: z.string().min(1, 'Seleziona il livello di esternalizzazione'),
+  privacy: z.boolean().refine((val) => val === true, {
+    message: 'Devi accettare la privacy policy',
+  }),
+})
