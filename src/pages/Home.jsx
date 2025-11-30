@@ -1,5 +1,6 @@
 import Problem from '../components/sections/Problem'
 import Solution from '../components/sections/Solution'
+import OutsourcingQuiz from '../components/sections/OutsourcingQuiz'
 
 function Home() {
   return (
@@ -30,6 +31,9 @@ function Home() {
 
       {/* Solution Section */}
       <Solution />
+
+      {/* Quiz Section */}
+      <OutsourcingQuiz />
 
       {/* Lead Magnet Section Placeholder */}
       <section id="lead-magnet" className="section-padding bg-accent/10">
