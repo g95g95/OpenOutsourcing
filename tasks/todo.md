@@ -1,47 +1,66 @@
-# Task: Implementare Quiz Esporta PDF
+# Piano: Implementazione Consulenza Gratuita + Pricing
 
 ## Obiettivo
-Creare un quiz interattivo con 7 domande Sì/No per valutare se ha senso liberarsi dell'esternalizzazione, con possibilità di esportare il risultato in PDF.
+Implementare la sezione Pricing e il form di richiesta consulenza gratuita con invio email automatico.
 
-## Le 7 Domande
-1. Spendi più del 5% del tuo fatturato in consulenti o fornitori esterni?
-2. I tuoi processi esternalizzati sono ripetitivi e prevedibili?
-3. Hai difficoltà a ottenere modifiche rapide dai tuoi fornitori?
-4. Ti senti "ostaggio" di uno o più fornitori esterni?
-5. I costi di outsourcing sono aumentati negli ultimi 2 anni?
-6. Condividi dati sensibili aziendali con fornitori esterni?
-7. Il tuo team interno ha smesso di sviluppare competenze chiave?
+---
 
-## Logica Punteggio
-- 0-2 Sì → Basso potenziale di risparmio
-- 3-4 Sì → Medio potenziale di risparmio
-- 5-7 Sì → Alto potenziale di risparmio
+## Todo List
 
-## Todo
-- [x] Creare piano
-- [x] Installare jspdf
-- [x] Creare componente OutsourcingQuiz
-- [x] Implementare funzione esportaPDF
-- [x] Integrare nella Home
-- [x] Testare
+### 1. Sezione Pricing
+- [ ] Creare componente `Pricing.jsx` in `src/components/sections/`
+- [ ] Contenuti pricing:
+  - Tariffa oraria variabile: 50-150 euro/ora
+  - Success fee: 20% del risparmio annuo (una tantum)
+  - Pagamento dopo 1 mese di test efficacia
+  - Primo consulto gratuito
 
-## Review
+### 2. Form Consulenza
+- [ ] Creare nuovo schema Zod in `validation.js` per il nuovo form
+- [ ] Creare componente `ConsultationForm.jsx` in `src/components/forms/`
+- [ ] Campi form:
+  - Nome e cognome (required)
+  - Nome azienda (required)
+  - Codice ATECO (opzionale)
+  - Fascia fatturato: <100k, 100k-500k, 500k-1M, 1M-5M, 5M-10M, 10M-50M, 50M-100M, >100M
+  - Problema intaccato (select con funzionalita IT)
+  - Livello esternalizzazione (alto, medio, basso)
+  - Privacy checkbox (required)
 
-### Modifiche effettuate:
-1. **Installata dipendenza jspdf** per generazione PDF client-side
-2. **Creato componente `OutsourcingQuiz.jsx`** in `src/components/sections/`
-   - Quiz interattivo con 7 domande Sì/No
-   - Bottoni colorati (rosso=Sì, verde=No)
-   - Calcolo automatico punteggio
-   - 3 livelli di risultato (Basso/Medio/Alto)
-   - Funzione `esportaPDF()` che genera PDF scaricabile
-3. **Integrato nella Home** dopo la sezione Solution
+### 3. Invio Email
+- [ ] Configurare Formspree per inviare a: oiluig.illenob@gmail.com
+- [ ] Oggetto email: [Nome azienda][Nome persona][Fatturato]
+- [ ] Usare campo `_subject` di Formspree per oggetto dinamico
 
-### File modificati:
-- `package.json` (nuova dipendenza jspdf)
-- `src/components/sections/OutsourcingQuiz.jsx` (nuovo)
-- `src/pages/Home.jsx` (import + componente)
+### 4. Integrazione
+- [ ] Aggiornare `Home.jsx` con nuove sezioni
+- [ ] Collegare sezione Pricing con form consulenza
+- [ ] Testare il flusso completo
 
-### Note:
-- Build completato con successo
-- Warning su chunk size (jspdf è una libreria pesante) - non bloccante
+---
+
+## Note Tecniche
+
+### Formspree
+- Servizio gratuito per invio form via email
+- Supporta campo `_subject` per oggetto personalizzato
+- Endpoint: https://formspree.io/f/{FORM_ID}
+- L'utente dovra creare un form su formspree.io e inserire l'ID
+
+### Opzioni Problema IT (scrollbar)
+- Gestione infrastruttura IT
+- Sviluppo software
+- Manutenzione applicazioni
+- Help desk / Supporto tecnico
+- Cybersecurity
+- Cloud e hosting
+- Data analytics / BI
+- ERP / CRM
+- E-commerce
+- Marketing digitale
+- Altro
+
+---
+
+## Status
+**In attesa di conferma utente**
