@@ -21,8 +21,8 @@
 
 ## Fase 4: Sezioni Home
 - [ ] Hero section (placeholder creato)
-- [ ] Problem section
-- [ ] Solution section
+- [x] Problem section - contenuti forniti (outsourcing e impatto fatturato)
+- [x] Solution section - contenuti forniti (AI agents e vibe-coding)
 - [ ] LeadMagnet section
 - [ ] About section
 - [ ] Pricing section con simulatore
@@ -82,3 +82,39 @@ src/
 ```
 
 **Prossimi passi:** Implementare le sezioni della Home e i form completi.
+
+---
+
+### Sezioni Problem e Solution Completate
+
+**Data:** 2025-11-30
+
+**File creati:**
+- `src/components/sections/Problem.jsx` - Sezione "Il Problema" con contenuti sull'outsourcing
+- `src/components/sections/Solution.jsx` - Sezione "La Soluzione" con AI agents e vibe-coding
+
+**File modificati:**
+- `src/pages/Home.jsx` - Aggiunto import e utilizzo dei nuovi componenti
+
+**Contenuti sezione Problem:**
+- Introduzione all'esternalizzazione e forme (offshore, onshore, nearshoring, BPO, ITO)
+- Mercato outsourcing Italia: 19 mld €, ~30.000 imprese, 200.000 addetti
+- Benefici: risparmi fino al 70% sui costi personale, flessibilità, competenze
+- Rischi: costi nascosti, perdita controllo, limiti differenziazione
+- Caso studio Boeing 787 Dreamliner: -16% azioni in 5 settimane
+- Impatto fatturato: quando aumenta e quando diminuisce
+- Raccomandazioni strategiche
+
+**Contenuti sezione Solution:**
+- Agent AI come forza lavoro digitale (20-200€/mese, 24/7)
+- Vibe-coding: sviluppo senza scrivere codice
+- Vantaggi: aziende più snelle, rapide, sicure, scalabili
+- 12 attività riportabili in-house in meno di 90 giorni
+- Impatto pratico: da team esterni 30-50€/h a 1-2 persone con IA
+
+**Caratteristiche tecniche:**
+- Animazioni Framer Motion per effetti on-scroll
+- Accordion espandibili per contenuti dettagliati
+- Card statistiche con icone Lucide
+- Grid responsive per dispositivi mobili
+- Stile coerente con design system (colori primary, accent, warning)

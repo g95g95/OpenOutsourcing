@@ -1,3 +1,6 @@
+import Problem from '../components/sections/Problem'
+import Solution from '../components/sections/Solution'
+
 function Home() {
   return (
     <div className="pt-16">
@@ -22,21 +25,11 @@ function Home() {
         </div>
       </section>
 
-      {/* Problem Section Placeholder */}
-      <section id="problem" className="section-padding bg-white">
-        <div className="container-custom">
-          <h2 className="heading-2 text-center text-primary">Il Problema</h2>
-          <p className="text-body text-center mt-4">Sezione in costruzione...</p>
-        </div>
-      </section>
+      {/* Problem Section */}
+      <Problem />
 
-      {/* Solution Section Placeholder */}
-      <section id="solution" className="section-padding">
-        <div className="container-custom">
-          <h2 className="heading-2 text-center text-primary">La Soluzione</h2>
-          <p className="text-body text-center mt-4">Sezione in costruzione...</p>
-        </div>
-      </section>
+      {/* Solution Section */}
+      <Solution />
 
       {/* Lead Magnet Section Placeholder */}
       <section id="lead-magnet" className="section-padding bg-accent/10">
