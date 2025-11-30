@@ -7,7 +7,7 @@ const pricingFeatures = [
   {
     icon: Clock,
     title: 'Tariffa Oraria',
-    price: '50 - 150',
+    price: 'max 150€/h',
     unit: 'euro/ora',
     description: 'Variabile in base alla complessita del progetto e alle competenze richieste.',
   },

@@ -9,7 +9,7 @@ import Select from '../ui/Select'
 import Button from '../ui/Button'
 
 // Formspree endpoint - sostituire con ID reale
-const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID'
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mnnejabr'
 
 const fasceFatturato = [
   { value: '<100k', label: 'Meno di 100.000 euro' },
