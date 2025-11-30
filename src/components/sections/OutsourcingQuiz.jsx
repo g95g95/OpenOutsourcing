@@ -4,10 +4,10 @@ import Card from '../ui/Card'
 import Button from '../ui/Button'
 
 const domande = [
-  "Spendi più del 5% del tuo fatturato in consulenti o fornitori esterni?",
+  "Spendi piÃ¹ del 5% del tuo fatturato in consulenti o fornitori esterni?",
   "I tuoi processi esternalizzati sono ripetitivi e prevedibili?",
-  "Hai difficoltà a ottenere modifiche rapide dai tuoi fornitori?",
-  "Ti senti \"ostaggio\" di uno o più fornitori esterni?",
+  "Hai difficoltÃ  a ottenere modifiche rapide dai tuoi fornitori?",
+  "Ti senti \"ostaggio\" di uno o piÃ¹ fornitori esterni?",
   "I costi di outsourcing sono aumentati negli ultimi 2 anni?",
   "Condividi dati sensibili aziendali con fornitori esterni?",
   "Il tuo team interno ha smesso di sviluppare competenze chiave?"
@@ -26,14 +26,14 @@ function getResultato(punteggio) {
       livello: "Medio",
       colore: "text-amber-600",
       bgColore: "bg-amber-50",
-      messaggio: "Ci sono segnali di inefficienza. Un'analisi approfondita potrebbe rivelare opportunità di risparmio significative."
+      messaggio: "Ci sono segnali di inefficienza. Un'analisi approfondita potrebbe rivelare opportunitÃ  di risparmio significative."
     }
   } else {
     return {
       livello: "Alto",
       colore: "text-red-600",
       bgColore: "bg-red-50",
-      messaggio: "Stai probabilmente sprecando risorse importanti. È il momento di valutare alternative con AI e automazione."
+      messaggio: "Stai probabilmente sprecando risorse importanti. Ãˆ il momento di valutare alternative con AI e automazione."
     }
   }
 }
@@ -157,7 +157,7 @@ function OutsourcingQuiz() {
                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         }`}
                       >
-                        Sì
+                        SÃ¬
                       </button>
                       <button
                         onClick={() => handleRisposta(index, false)}
