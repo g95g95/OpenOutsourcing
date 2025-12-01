@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Linkedin, Mail, Phone } from 'lucide-react'
+import contacts from '../../data/contacts.json'
 
 function Footer() {
   return (
@@ -33,17 +34,21 @@ function Footer() {
             <ul className="space-y-2 text-sm text-slate-300">
               <li className="flex items-center gap-2">
                 <Mail size={16} />
-                <a href="mailto:info@openoutsourcing.ai" className="hover:text-white transition-colors">
-                  info@openoutsourcing.ai
+                <a href={`mailto:${contacts.email}`} className="hover:text-white transition-colors">
+                  {contacts.email}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={16} />
-                <span>+39 XXX XXX XXXX</span>
+                <a href={`tel:${contacts.phone}`} className="hover:text-white transition-colors">
+                  {contacts.phoneDisplay}
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <Linkedin size={16} />
-                <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
+                <a href={contacts.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                  {contacts.linkedinName}
+                </a>
               </li>
             </ul>
           </div>
