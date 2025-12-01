@@ -1,8 +1,10 @@
+import { Mail, Phone, Linkedin } from 'lucide-react'
 import Problem from '../components/sections/Problem'
 import Solution from '../components/sections/Solution'
 import OutsourcingQuiz from '../components/sections/OutsourcingQuiz'
 import Pricing from '../components/sections/Pricing'
 import ConsultationForm from '../components/forms/ConsultationForm'
+import contacts from '../data/contacts.json'
 
 function Home() {
   return (
@@ -67,9 +69,58 @@ function Home() {
       {/* Contact Section */}
       <section id="contact" className="section-padding bg-primary">
         <div className="container-custom">
-          <div className="max-w-xl mx-auto">
-            <h2 className="heading-2 text-center text-white mb-8">Inizia Ora</h2>
-            <ConsultationForm />
+          <h2 className="heading-2 text-center text-white mb-12">Inizia Ora</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-5xl mx-auto">
+            {/* Contact Info */}
+            <div className="text-white">
+              <h3 className="text-xl font-semibold mb-6">Contattami Direttamente</h3>
+              <p className="text-slate-300 mb-8">
+                Preferisci parlare prima? Contattami via email, telefono o LinkedIn.
+                Rispondo entro 24 ore.
+              </p>
+              <ul className="space-y-4">
+                <li>
+                  <a
+                    href={`mailto:${contacts.email}`}
+                    className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                      <Mail size={20} />
+                    </div>
+                    <span>{contacts.email}</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`tel:${contacts.phone}`}
+                    className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                      <Phone size={20} />
+                    </div>
+                    <span>{contacts.phoneDisplay}</span>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={contacts.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-slate-300 hover:text-white transition-colors"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
+                      <Linkedin size={20} />
+                    </div>
+                    <span>{contacts.linkedinName}</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            {/* Form */}
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-6">Prenota una Consulenza Gratuita</h3>
+              <ConsultationForm />
+            </div>
           </div>
         </div>
       </section>
