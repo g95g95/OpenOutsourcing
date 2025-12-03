@@ -1,43 +1,58 @@
-# Piano: Protezione Password Sito
+# Piano: Calendario Prenotazioni, PDF Migliorato e Fix Accenti
 
 ## Obiettivo
-Aggiungere una schermata di protezione password all'accesso del sito. Dopo 3 tentativi sbagliati, la pagina si chiude.
+1. Aggiungere sistema di calendario per prenotare consulenze con slot di 30 minuti
+2. Migliorare l'esportazione PDF del quiz rendendola più accattivante
+3. Sistemare gli accenti rotti nel file OutsourcingQuiz.jsx
 
 ---
 
 ## Todo List
 
-### 1. Componente PasswordGate
-- [x] Creare componente `PasswordGate.jsx` in `src/components/`
-- [x] Form con campo password
-- [x] Contatore tentativi (max 3)
-- [x] Chiusura tab dopo 3 errori
-- [x] Salvare autenticazione in sessionStorage
+### 1. Fix Accenti (Quick Win)
+- [ ] Correggere encoding in OutsourcingQuiz.jsx:
+  - "pi�" → "più" (linee 7, 10)
+  - "difficolt�" → "difficoltà" (linea 9)
+  - "opportunit�" → "opportunità" (linea 29)
+  - "�" → "È" (linea 36)
+  - "S�" → "Sì" (linea 160)
+  - "attivita" → "attività" (linee 40-42 in ConsultationForm.jsx)
 
-### 2. Integrazione in App
-- [x] Wrappare il contenuto di App.jsx con PasswordGate
-- [x] Mostrare il sito solo se autenticato
+### 2. Sistema Calendario Prenotazioni
+- [ ] Creare componente `CalendarBooking.jsx` con:
+  - Selezione data (date picker)
+  - Slot orari di 30 minuti (es: 9:00, 9:30, 10:00...)
+  - Stato per slot già prenotati (localStorage per MVP)
+  - Integrazione con form consulenza
+- [ ] Definire orari disponibili (es: Lun-Ven 9:00-18:00)
+- [ ] Salvare prenotazioni e bloccare slot già presi
+- [ ] Integrare calendario nella sezione Contact
+
+### 3. Miglioramento PDF Export
+- [ ] Rendere PDF più accattivante:
+  - Aggiungere logo/header grafico
+  - Migliorare layout con box colorati
+  - Aggiungere icone/simboli per Sì/No
+  - Includere grafico visuale del punteggio
+  - Footer con contatti e social
+  - Design più moderno e professionale
+
+---
+
+## Note Tecniche
+
+### Calendario
+- Slot: 30 minuti
+- Orari: 9:00 - 18:00 (configurabile)
+- Giorni: Lun-Ven (no weekend)
+- Storage: localStorage per MVP (può evolvere a backend)
+- La data/ora selezionata viene inviata insieme al form
+
+### PDF
+- Libreria: jsPDF già installato
+- Miglioramenti: colori, layout, info aggiuntive
 
 ---
 
 ## Status
-**COMPLETATO**
-
----
-
-## Review
-
-### File Creati/Modificati
-1. `src/components/PasswordGate.jsx` - Nuovo componente gate password
-2. `src/App.jsx` - Integrazione PasswordGate wrapper
-
-### Funzionalità Implementate
-- **Form password**: Schermata a tutto schermo con campo password
-- **Max 3 tentativi**: Contatore che blocca dopo 3 errori
-- **Chiusura tab**: Tenta `window.close()`, altrimenti mostra blocco permanente
-- **Persistenza sessione**: Usa `sessionStorage` (si resetta chiudendo browser)
-
-### Note
-- `window.close()` funziona solo su tab aperte via JavaScript
-- Se non funziona, viene mostrato un messaggio "Accesso Bloccato" permanente
-- La sessione dura finché il browser è aperto
+**IN ATTESA DI APPROVAZIONE**
