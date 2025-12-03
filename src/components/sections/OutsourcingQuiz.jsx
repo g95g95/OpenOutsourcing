@@ -4,10 +4,10 @@ import Card from '../ui/Card'
 import Button from '../ui/Button'
 
 const domande = [
-  "Spendi più del 5% del tuo fatturato in consulenti o fornitori esterni?",
+  "Spendi piÃ¹ del 5% del tuo fatturato in consulenti o fornitori esterni?",
   "I tuoi processi esternalizzati sono ripetitivi e prevedibili?",
-  "Hai difficoltà a ottenere modifiche rapide dai tuoi fornitori?",
-  "Ti senti \"ostaggio\" di uno o più fornitori esterni?",
+  "Hai difficoltÃ  a ottenere modifiche rapide dai tuoi fornitori?",
+  "Ti senti \"ostaggio\" di uno o piÃ¹ fornitori esterni?",
   "I costi di outsourcing sono aumentati negli ultimi 2 anni?",
   "Condividi dati sensibili aziendali con fornitori esterni?",
   "Il tuo team interno ha smesso di sviluppare competenze chiave?"
@@ -26,14 +26,14 @@ function getResultato(punteggio) {
       livello: "Medio",
       colore: "text-amber-600",
       bgColore: "bg-amber-50",
-      messaggio: "Ci sono segnali di inefficienza. Un'analisi approfondita potrebbe rivelare opportunità di risparmio significative."
+      messaggio: "Ci sono segnali di inefficienza. Un'analisi approfondita potrebbe rivelare opportunitÃ  di risparmio significative."
     }
   } else {
     return {
       livello: "Alto",
       colore: "text-red-600",
       bgColore: "bg-red-50",
-      messaggio: "Stai probabilmente sprecando risorse importanti. È il momento di valutare alternative con AI e automazione."
+      messaggio: "Stai probabilmente sprecando risorse importanti. Ãˆ il momento di valutare alternative con AI e automazione."
     }
   }
 }
@@ -61,70 +61,151 @@ function OutsourcingQuiz() {
 
   const esportaPDF = () => {
     const doc = new jsPDF()
+    const pageWidth = doc.internal.pageSize.getWidth()
 
-    // Titolo
-    doc.setFontSize(20)
-    doc.setTextColor(15, 23, 42) // slate-900
+    // Colori
+    const emerald = [16, 185, 129]
+    const red = [239, 68, 68]
+    const slate900 = [15, 23, 42]
+    const slate600 = [71, 85, 105]
+    const slate200 = [226, 232, 240]
+
+    // === HEADER CON BANDA COLORATA ===
+    doc.setFillColor(...emerald)
+    doc.rect(0, 0, pageWidth, 45, 'F')
+
+    // Logo/Titolo su sfondo verde
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(28)
+    doc.setFont('helvetica', 'bold')
     doc.text("OpenOutsourcing.AI", 20, 25)
 
-    doc.setFontSize(16)
-    doc.text("Analisi Potenziale di Risparmio", 20, 35)
-
-    // Linea separatrice
-    doc.setDrawColor(226, 232, 240)
-    doc.line(20, 40, 190, 40)
-
-    // Risultato
-    doc.setFontSize(14)
-    doc.setTextColor(15, 23, 42)
-    doc.text("Punteggio: " + punteggio + "/7", 20, 55)
-    doc.text("Potenziale di risparmio: " + risultato.livello, 20, 65)
-
-    // Domande e risposte
     doc.setFontSize(12)
-    doc.text("Le tue risposte:", 20, 80)
+    doc.setFont('helvetica', 'normal')
+    doc.text("Trasforma l'outsourcing in risparmio con AI e automazione", 20, 37)
 
-    let y = 90
+    // === TITOLO REPORT ===
+    doc.setTextColor(...slate900)
+    doc.setFontSize(20)
+    doc.setFont('helvetica', 'bold')
+    doc.text("Report Analisi Potenziale di Risparmio", 20, 65)
+
+    // Data generazione
+    const oggi = new Date().toLocaleDateString('it-IT', {
+      day: '2-digit', month: 'long', year: 'numeric'
+    })
+    doc.setFontSize(10)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(...slate600)
+    doc.text("Generato il " + oggi, 20, 73)
+
+    // === BOX RISULTATO PRINCIPALE ===
+    const boxY = 82
+    const boxColor = punteggio <= 2 ? [209, 250, 229] : punteggio <= 4 ? [254, 243, 199] : [254, 226, 226]
+    const textColor = punteggio <= 2 ? [5, 150, 105] : punteggio <= 4 ? [180, 83, 9] : [185, 28, 28]
+
+    doc.setFillColor(...boxColor)
+    doc.roundedRect(20, boxY, pageWidth - 40, 35, 4, 4, 'F')
+
+    // Punteggio grande
+    doc.setTextColor(...textColor)
+    doc.setFontSize(32)
+    doc.setFont('helvetica', 'bold')
+    doc.text(punteggio + "/7", 35, boxY + 23)
+
+    // Livello e messaggio
+    doc.setFontSize(14)
+    doc.text("Potenziale di Risparmio: " + risultato.livello.toUpperCase(), 75, boxY + 15)
+
+    doc.setFontSize(10)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(...slate600)
+    const msgRighe = doc.splitTextToSize(risultato.messaggio, pageWidth - 100)
+    doc.text(msgRighe, 75, boxY + 25)
+
+    // === BARRA PROGRESSO VISUALE ===
+    const barY = boxY + 42
+    doc.setFillColor(...slate200)
+    doc.roundedRect(20, barY, pageWidth - 40, 8, 2, 2, 'F')
+
+    const progressWidth = ((pageWidth - 40) / 7) * punteggio
+    const progressColor = punteggio <= 2 ? emerald : punteggio <= 4 ? [245, 158, 11] : red
+    doc.setFillColor(...progressColor)
+    doc.roundedRect(20, barY, progressWidth, 8, 2, 2, 'F')
+
+    // === SEZIONE RISPOSTE ===
+    let y = barY + 20
+    doc.setTextColor(...slate900)
+    doc.setFontSize(14)
+    doc.setFont('helvetica', 'bold')
+    doc.text("Dettaglio Risposte", 20, y)
+
+    y += 10
     domande.forEach((domanda, index) => {
-      const risposta = risposte[index] ? "SI" : "NO"
+      const risposta = risposte[index]
 
-      // Gestione testo lungo
-      const testoCompleto = (index + 1) + ". " + domanda
-      const righe = doc.splitTextToSize(testoCompleto, 140)
+      // Box per ogni domanda
+      const rowHeight = 12
+      doc.setFillColor(risposta ? 254 : 240, risposta ? 242 : 253, risposta ? 242 : 244)
+      doc.roundedRect(20, y - 6, pageWidth - 40, rowHeight, 2, 2, 'F')
 
-      doc.setTextColor(15, 23, 42)
-      doc.text(righe, 20, y)
+      // Numero domanda
+      doc.setFontSize(10)
+      doc.setFont('helvetica', 'bold')
+      doc.setTextColor(...slate900)
+      doc.text((index + 1) + ".", 25, y + 2)
 
-      // Risposta colorata
-      if (risposte[index]) {
-        doc.setTextColor(220, 38, 38) // red
-      } else {
-        doc.setTextColor(22, 163, 74) // green
+      // Testo domanda (troncato se necessario)
+      doc.setFont('helvetica', 'normal')
+      let testoDomanda = domanda
+      if (testoDomanda.length > 70) {
+        testoDomanda = testoDomanda.substring(0, 67) + "..."
       }
-      doc.text(risposta, 170, y)
+      doc.text(testoDomanda, 35, y + 2)
 
-      y += righe.length * 7 + 5
+      // Indicatore risposta con simbolo
+      const simbolo = risposta ? "!" : "OK"
+      const indicatoreColor = risposta ? red : emerald
+      doc.setFillColor(...indicatoreColor)
+      doc.roundedRect(pageWidth - 35, y - 4, 18, 8, 2, 2, 'F')
+      doc.setTextColor(255, 255, 255)
+      doc.setFontSize(8)
+      doc.setFont('helvetica', 'bold')
+      doc.text(simbolo, pageWidth - 29, y + 1)
+
+      y += rowHeight + 3
     })
 
-    // Messaggio finale
+    // === SEZIONE CTA ===
     y += 10
-    doc.setTextColor(15, 23, 42)
+    doc.setFillColor(...emerald)
+    doc.roundedRect(20, y, pageWidth - 40, 30, 4, 4, 'F')
+
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(14)
+    doc.setFont('helvetica', 'bold')
+    doc.text("Vuoi scoprire quanto puoi risparmiare?", pageWidth / 2, y + 12, { align: 'center' })
+
     doc.setFontSize(11)
-    const messaggioRighe = doc.splitTextToSize(risultato.messaggio, 170)
-    doc.text(messaggioRighe, 20, y)
+    doc.setFont('helvetica', 'normal')
+    doc.text("Prenota una consulenza GRATUITA su openoutsourcing.ai", pageWidth / 2, y + 22, { align: 'center' })
 
-    // CTA
-    y += messaggioRighe.length * 6 + 15
-    doc.setFontSize(12)
-    doc.setTextColor(16, 185, 129) // emerald-500
-    doc.text("Prenota una consulenza gratuita su openoutsourcing.ai", 20, y)
+    // === FOOTER ===
+    const footerY = 275
+    doc.setDrawColor(...slate200)
+    doc.line(20, footerY - 5, pageWidth - 20, footerY - 5)
 
-    // Footer
+    doc.setTextColor(...slate600)
     doc.setFontSize(9)
-    doc.setTextColor(148, 163, 184)
-    doc.text("Generato da OpenOutsourcing.AI", 20, 285)
+    doc.setFont('helvetica', 'normal')
+    doc.text("OpenOutsourcing.AI - Trasformiamo l'outsourcing in risparmio", 20, footerY + 2)
+    doc.text("openoutsourcing.ai | +39 320 083 2135", 20, footerY + 8)
 
-    doc.save("analisi-outsourcing.pdf")
+    doc.setTextColor(...emerald)
+    doc.setFontSize(8)
+    doc.text("Questo report e' stato generato automaticamente.", pageWidth - 20, footerY + 8, { align: 'right' })
+
+    doc.save("analisi-outsourcing-" + oggi.replace(/ /g, '-') + ".pdf")
   }
 
   return (
@@ -157,7 +238,7 @@ function OutsourcingQuiz() {
                             : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                         }`}
                       >
-                        Sì
+                        SÃ¬
                       </button>
                       <button
                         onClick={() => handleRisposta(index, false)}

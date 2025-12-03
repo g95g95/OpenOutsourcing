@@ -7,6 +7,7 @@ import { freeConsultationSchema } from '../../utils/validation'
 import Input from '../ui/Input'
 import Select from '../ui/Select'
 import Button from '../ui/Button'
+import CalendarBooking, { saveBooking } from '../ui/CalendarBooking'
 
 // Formspree endpoint - sostituire con ID reale
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mnnejabr'
@@ -37,14 +38,15 @@ const problemiIT = [
 ]
 
 const livelliEsternalizzazione = [
-  { value: 'alto', label: 'Alto - Molte attivita esternalizzate' },
-  { value: 'medio', label: 'Medio - Alcune attivita esternalizzate' },
-  { value: 'basso', label: 'Basso - Poche attivita esternalizzate' },
+  { value: 'alto', label: 'Alto - Molte attività esternalizzate' },
+  { value: 'medio', label: 'Medio - Alcune attività esternalizzate' },
+  { value: 'basso', label: 'Basso - Poche attività esternalizzate' },
 ]
 
 function ConsultationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null) // 'success' | 'error'
+  const [selectedDateTime, setSelectedDateTime] = useState(null)
 
   const {
     register,
@@ -88,11 +90,17 @@ function ConsultationForm() {
           'Fascia Fatturato': data.fasciaFatturato,
           'Problema IT': data.problemaIT,
           'Livello Esternalizzazione': data.livelloEsternalizzazione,
+          'Data e Ora Appuntamento': selectedDateTime?.formatted || 'Non selezionato',
         }),
       })
 
       if (response.ok) {
+        // Salva la prenotazione nel localStorage
+        if (selectedDateTime?.date && selectedDateTime?.slot) {
+          saveBooking(selectedDateTime.date, selectedDateTime.slot)
+        }
         setSubmitStatus('success')
+        setSelectedDateTime(null)
         reset()
       } else {
         throw new Error('Errore invio')
@@ -202,6 +210,17 @@ function ConsultationForm() {
           required
         />
 
+        {/* Calendario Prenotazioni */}
+        <div className="pt-4">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Scegli Data e Ora per la Consulenza
+          </label>
+          <CalendarBooking
+            onSelect={setSelectedDateTime}
+            selectedDateTime={selectedDateTime}
+          />
+        </div>
+
         <div className="pt-2">
           <label className="flex items-start gap-3 cursor-pointer">
             <input
@@ -231,11 +250,13 @@ function ConsultationForm() {
         disabled={isSubmitting}
       >
         <Send className="w-4 h-4" />
-        Invia Richiesta
+        {selectedDateTime ? 'Prenota Appuntamento' : 'Invia Richiesta'}
       </Button>
 
       <p className="text-xs text-slate-500 mt-4 text-center">
-        Ti contattero entro 24 ore lavorative
+        {selectedDateTime
+          ? 'Riceverai una conferma via email'
+          : 'Ti contatterò entro 24 ore lavorative'}
       </p>
     </motion.form>
   )
