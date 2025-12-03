@@ -41,12 +41,14 @@
 
 ---
 
-## Status
-**COMPLETATO**
+## Note Tecniche
 
----
-
-## Review
+### Calendario
+- Slot: 30 minuti
+- Orari: 9:00 - 18:00 (configurabile)
+- Giorni: Lun-Ven (no weekend)
+- Storage: localStorage per MVP (può evolvere a backend)
+- La data/ora selezionata viene inviata insieme al form
 
 ### File Creati
 1. `src/components/ui/CalendarBooking.jsx` - Nuovo componente calendario prenotazioni
