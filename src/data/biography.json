@@ -1,0 +1,74 @@
+{
+  "name": "Giulio Bonelli",
+  "title": "Fisico | Consulente Anti-Esternalizzazione | AI Strategist",
+  "photo": "/images/giulio-profile.jpg",
+  "photoAlt": "Giulio Bonelli",
+
+  "sections": [
+    {
+      "id": "origin",
+      "title": "Le Origini",
+      "icon": "GraduationCap",
+      "preview": "Fisico di laurea, azzeccagarbugli di professione.",
+      "content": "Mi chiamo Giulio Bonelli. Sono un fisico di laurea e un azzeccagarbugli di professione. La fisica mi ha insegnato a scomporre i problemi complessi in componenti elementari, a cercare le leggi nascoste dietro il caos apparente. Questa mentalità l'ho portata nel mondo del business, dove il caos è spesso generato da decisioni prese senza capire le conseguenze sistemiche.",
+      "expanded": true
+    },
+    {
+      "id": "outsourcing-drama",
+      "title": "Il Dramma dell'Esternalizzazione",
+      "icon": "AlertTriangle",
+      "preview": "Ho visto con i miei occhi l'enorme spreco che l'outsourcing genera.",
+      "content": "Durante il mio percorso lavorativo ho assistito al dramma dell'esternalizzazione: il parto postumo del terziario che alimenta se stesso. Ho visto con i miei occhi l'enorme spreco di soldi, risorse umane e professionali, e di tempo. Ho visto aziende svuotarsi delle proprie competenze, trasferendole a realtà terze che poi le rivendevano a peso d'oro. Il know-how che prima risiedeva nelle persone, nei processi, nella cultura aziendale, improvvisamente diventava proprietà di consulenti esterni. E l'azienda? Sempre più dipendente, sempre più fragile, sempre più costosa da gestire.",
+      "expanded": false
+    },
+    {
+      "id": "ttt-method",
+      "title": "Il Metodo TTT",
+      "icon": "Sparkles",
+      "preview": "Translate, Transmit, Transform: riportare le competenze in casa.",
+      "content": "L'AI offre la possibilità di invertire questa tendenza. Ho sviluppato il metodo TTT: Translate, Transmit and Transform. Il processo è semplice ma potente: prima si traducono le competenze perse in prompt strutturati, poi si trasmettono questi prompt a Large Language Models opportunamente configurati, infine si trasforma l'azienda riportandola a quello che era prima dell'esternalizzazione selvaggia. Un alveare di competenze distribuite, autonome, sempre disponibili. Non più dipendenza da fornitori esterni, ma intelligenza interna amplificata dall'AI.",
+      "expanded": false
+    },
+    {
+      "id": "personal",
+      "title": "L'AI nella Vita Personale",
+      "icon": "Heart",
+      "preview": "I miracoli dell'AI non si fermano al business.",
+      "content": "Ho sperimentato i miracoli dell'AI anche sul mio corpo. La corsa mi era stata proibita per motivi biomeccanici: problemi strutturali che secondo i medici rendevano impossibile qualsiasi attività ad alto impatto. Grazie all'analisi AI del mio movimento, alla pianificazione personalizzata degli allenamenti e al monitoraggio continuo, oggi corro gare di trail running. Quello che sembrava impossibile è diventato realtà. Se l'AI può trasformare un corpo 'difettoso' in quello di un trail runner, immagina cosa può fare per la tua azienda.",
+      "expanded": false,
+      "media": {
+        "type": "image",
+        "src": "/images/giulio-trail.jpg",
+        "alt": "Giulio durante una gara di trail running"
+      }
+    },
+    {
+      "id": "tech-demos",
+      "title": "Tecnologie Futuristiche",
+      "icon": "Cpu",
+      "preview": "Interrogo database complessi con il linguaggio naturale.",
+      "content": "Le tecnologie che utilizzo non sono fantascienza: sono strumenti reali che applico ogni giorno. Posso interrogare il database di ProCyclingStats per analizzare le performance di migliaia di ciclisti professionisti usando il linguaggio naturale. Posso accedere ai dati della NASA e trasformarli in insight comprensibili. Posso connettere un LLM al gestionale della tua azienda e permetterti di 'parlare' con i tuoi dati. Il futuro è già qui, solo che non è distribuito equamente. Il mio lavoro è portarlo nella tua azienda.",
+      "expanded": false,
+      "demos": [
+        {
+          "name": "ProCyclingStats Query",
+          "description": "Analisi dati ciclismo professionistico via linguaggio naturale"
+        },
+        {
+          "name": "NASA Data Explorer",
+          "description": "Accesso e visualizzazione dati spaziali"
+        }
+      ]
+    }
+  ],
+
+  "gestureInstructions": {
+    "it": {
+      "navigate": "Muovi la mano aperta per navigare",
+      "expand": "Avvicina pollice e indice per espandere",
+      "contract": "Allontana pollice e indice per contrarre",
+      "select": "Chiudi il pugno per selezionare",
+      "swipe": "Scorri lateralmente per cambiare sezione"
+    }
+  }
+}
