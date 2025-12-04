@@ -1,7 +1,84 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Hand, ChevronLeft, ChevronRight } from 'lucide-react'
 import * as Icons from 'lucide-react'
+
+// Gargantua-style black hole component
+function GargantuaBlackHole() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+      {/* Outer glow - gravitational lensing effect */}
+      <div className="absolute w-[800px] h-[800px] rounded-full bg-gradient-radial from-transparent via-orange-500/5 to-transparent animate-pulse"
+           style={{ animationDuration: '4s' }} />
+
+      {/* Accretion disk - outer ring */}
+      <motion.div
+        className="absolute w-[600px] h-[600px]"
+        animate={{ rotate: 360 }}
+        transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
+      >
+        <div className="absolute inset-0 rounded-full"
+             style={{
+               background: 'conic-gradient(from 0deg, transparent 0%, rgba(251, 146, 60, 0.3) 25%, rgba(251, 191, 36, 0.4) 50%, rgba(251, 146, 60, 0.3) 75%, transparent 100%)',
+               filter: 'blur(20px)',
+             }} />
+      </motion.div>
+
+      {/* Accretion disk - inner bright ring */}
+      <motion.div
+        className="absolute w-[400px] h-[400px]"
+        animate={{ rotate: -360 }}
+        transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
+      >
+        <div className="absolute inset-0 rounded-full"
+             style={{
+               background: 'conic-gradient(from 180deg, rgba(253, 224, 71, 0.1) 0%, rgba(251, 146, 60, 0.5) 25%, rgba(253, 224, 71, 0.6) 50%, rgba(251, 146, 60, 0.5) 75%, rgba(253, 224, 71, 0.1) 100%)',
+               filter: 'blur(10px)',
+             }} />
+      </motion.div>
+
+      {/* Event horizon - the black center */}
+      <div className="absolute w-[200px] h-[200px] rounded-full bg-black shadow-2xl"
+           style={{
+             boxShadow: '0 0 100px 50px rgba(0, 0, 0, 0.8), inset 0 0 50px 25px rgba(0, 0, 0, 1)',
+           }} />
+
+      {/* Photon sphere - thin bright ring at event horizon */}
+      <div className="absolute w-[210px] h-[210px] rounded-full border border-orange-400/50"
+           style={{ filter: 'blur(2px)' }} />
+
+      {/* Gravitational particles being pulled in */}
+      {[...Array(30)].map((_, i) => {
+        const angle = (i / 30) * Math.PI * 2
+        const radius = 250 + Math.random() * 150
+        return (
+          <motion.div
+            key={`grav-${i}`}
+            className="absolute w-1 h-1 rounded-full bg-orange-300"
+            initial={{
+              x: Math.cos(angle) * radius,
+              y: Math.sin(angle) * radius,
+              opacity: 0.8,
+              scale: 1,
+            }}
+            animate={{
+              x: 0,
+              y: 0,
+              opacity: 0,
+              scale: 0,
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 3,
+              ease: 'easeIn',
+            }}
+          />
+        )
+      })}
+    </div>
+  )
+}
 
 /**
  * Fullscreen immersive gesture navigation experience
@@ -61,29 +138,8 @@ function GestureFullscreen({
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-50 bg-gradient-to-br from-slate-900 via-slate-800 to-primary overflow-hidden"
         >
-          {/* Animated background particles */}
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(20)].map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute w-2 h-2 rounded-full bg-accent/20"
-                initial={{
-                  x: Math.random() * window.innerWidth,
-                  y: Math.random() * window.innerHeight,
-                }}
-                animate={{
-                  x: [null, Math.random() * window.innerWidth],
-                  y: [null, Math.random() * window.innerHeight],
-                }}
-                transition={{
-                  duration: 10 + Math.random() * 10,
-                  repeat: Infinity,
-                  repeatType: 'reverse',
-                  ease: 'linear',
-                }}
-              />
-            ))}
-          </div>
+          {/* Gargantua Black Hole Background */}
+          <GargantuaBlackHole />
 
           {/* Hand cursor indicator */}
           {isTracking && palmPosition && (
@@ -113,7 +169,12 @@ function GestureFullscreen({
                     animate={{ opacity: 1, y: 0 }}
                     className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1 bg-accent text-white text-xs font-medium rounded-full whitespace-nowrap"
                   >
-                    {gesture === 'pinch' ? 'Espandi/Chiudi' : gesture === 'palm' ? 'Naviga' : gesture}
+                    {gesture === 'pinch' ? 'Espandi/Chiudi' :
+                     gesture === 'palm' ? 'Naviga' :
+                     gesture === 'thumbs-up' ? '👍 Muovi veloce!' :
+                     gesture === 'thumbs-nav-forward' ? '👍 Avanti →' :
+                     gesture === 'thumbs-nav-backward' ? '← Indietro 👍' :
+                     gesture}
                   </motion.div>
                 )}
               </div>
@@ -169,10 +230,14 @@ function GestureFullscreen({
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentSection?.id}
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: -20 }}
-                transition={{ duration: 0.3 }}
+                initial={{ opacity: 0, scale: 0.85, filter: 'blur(20px)' }}
+                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 1.1, filter: 'blur(30px)' }}
+                transition={{
+                  duration: 0.6,
+                  ease: [0.4, 0, 0.2, 1],
+                  filter: { duration: 0.8 }
+                }}
                 className="max-w-3xl w-full"
               >
                 {/* Section card */}
@@ -240,10 +305,10 @@ function GestureFullscreen({
             <motion.div
               initial={{ opacity: 1 }}
               animate={{ opacity: 0 }}
-              transition={{ delay: 3, duration: 1 }}
-              className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm rounded-lg px-6 py-3 text-white text-sm"
+              transition={{ delay: 4, duration: 1 }}
+              className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm rounded-lg px-6 py-3 text-white text-sm text-center"
             >
-              Muovi la mano per navigare • Pinch per espandere/chiudere • ESC per uscire
+              👍 Pollice in su + movimento veloce per navigare • Pinch per espandere • ESC per uscire
             </motion.div>
           )}
         </motion.div>

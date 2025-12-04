@@ -12,6 +12,7 @@ export function useGestureRecognition({ handData, enabled = true }) {
   const historyRef = useRef([])
   const lastGestureRef = useRef(null)
   const lastGestureTimeRef = useRef(0)
+  const lastThumbsNavTimeRef = useRef(0)
 
   // Calculate distance between two 3D points
   const calculateDistance = useCallback((p1, p2) => {
@@ -68,6 +69,67 @@ export function useGestureRecognition({ handData, enabled = true }) {
 
     return !indexExtended && !middleExtended && !ringExtended && !pinkyExtended
   }, [isFingerExtended])
+
+  // Detect thumbs-up gesture (fist with thumb extended upward)
+  const detectThumbsUp = useCallback((handData) => {
+    if (!handData?.landmarks) return false
+
+    const landmarks = handData.landmarks
+
+    // Thumb should be extended (tip above base, pointing up)
+    const thumbTip = landmarks[4]
+    const thumbBase = landmarks[2]
+    const wrist = landmarks[0]
+
+    if (!thumbTip || !thumbBase || !wrist) return false
+
+    // Thumb tip should be significantly above thumb base (pointing up)
+    const thumbPointingUp = thumbTip.y < thumbBase.y - 0.05
+
+    // All other fingers should be curled (closed fist)
+    const indexExtended = isFingerExtended(landmarks, 5, 8)
+    const middleExtended = isFingerExtended(landmarks, 9, 12)
+    const ringExtended = isFingerExtended(landmarks, 13, 16)
+    const pinkyExtended = isFingerExtended(landmarks, 17, 20)
+
+    const fingersCurled = !indexExtended && !middleExtended && !ringExtended && !pinkyExtended
+
+    return thumbPointingUp && fingersCurled
+  }, [isFingerExtended])
+
+  // Detect thumbs-up navigation (fast horizontal movement with thumbs-up)
+  const detectThumbsNavigation = useCallback(() => {
+    const history = historyRef.current
+    if (history.length < 5) return null
+
+    const now = Date.now()
+    // Cooldown between thumbs navigation gestures
+    if (now - lastThumbsNavTimeRef.current < 500) return null
+
+    const recent = history.slice(-5)
+    const oldest = recent[0]
+    const newest = recent[recent.length - 1]
+
+    const dx = newest.x - oldest.x
+    const timeDiff = newest.timestamp - oldest.timestamp
+
+    // Calculate horizontal velocity
+    const velocityX = dx / timeDiff * 1000
+
+    // Threshold for fast movement (right-hand rule navigation)
+    const navThreshold = 2.0
+
+    if (Math.abs(velocityX) > navThreshold) {
+      lastThumbsNavTimeRef.current = now
+      // Note: velocityX is in screen space, so positive = right on screen
+      // Since we mirror the x position, we need to invert:
+      // User moves hand forward (away from body) = right on mirrored screen = negative dx = backward
+      // User moves hand backward (toward body) = left on mirrored screen = positive dx = forward
+      return velocityX > 0 ? 'thumbs-nav-backward' : 'thumbs-nav-forward'
+    }
+
+    return null
+  }, [])
 
   // Detect swipe from position history
   const detectSwipe = useCallback(() => {
@@ -143,6 +205,15 @@ export function useGestureRecognition({ handData, enabled = true }) {
 
     if (isPinching) {
       detectedGesture = 'pinch'
+    } else if (detectThumbsUp(handData)) {
+      // Check for thumbs-up navigation (fast movement with thumb up)
+      const thumbsNav = detectThumbsNavigation()
+      if (thumbsNav) {
+        detectedGesture = thumbsNav
+        historyRef.current = [] // Clear history after navigation
+      } else {
+        detectedGesture = 'thumbs-up'
+      }
     } else if (detectClosedFist(handData)) {
       detectedGesture = 'fist'
     } else if (detectOpenPalm(handData)) {
@@ -184,7 +255,10 @@ export function useGestureRecognition({ handData, enabled = true }) {
     isOpenPalm: gesture === 'palm',
     isClosedFist: gesture === 'fist',
     isSwipingLeft: gesture === 'swipe-left',
-    isSwipingRight: gesture === 'swipe-right'
+    isSwipingRight: gesture === 'swipe-right',
+    isThumbsUp: gesture === 'thumbs-up',
+    isThumbsNavForward: gesture === 'thumbs-nav-forward',
+    isThumbsNavBackward: gesture === 'thumbs-nav-backward'
   }
 }
 

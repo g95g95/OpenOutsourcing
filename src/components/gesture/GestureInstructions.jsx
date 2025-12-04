@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Hand, Move, Maximize2, Minimize2, MousePointerClick } from 'lucide-react'
+import { Hand, Move, Maximize2 } from 'lucide-react'
 
 /**
  * Instructions overlay for gesture controls
@@ -8,33 +8,21 @@ function GestureInstructions({ isVisible, onDismiss }) {
   const instructions = [
     {
       icon: Hand,
-      gesture: '✋ Mano Aperta',
+      gesture: '👍 Pollice in su',
       action: 'Naviga tra le sezioni',
-      description: 'Muovi la mano per spostare il cursore'
+      description: 'Pugno chiuso + pollice in alto, muovi veloce avanti/indietro'
     },
     {
       icon: Maximize2,
-      gesture: '🤏 Pinch (avvicina)',
-      action: 'Espandi sezione',
-      description: 'Avvicina pollice e indice'
-    },
-    {
-      icon: Minimize2,
-      gesture: '🤏 Pinch (allontana)',
-      action: 'Contrai sezione',
-      description: 'Allontana pollice e indice'
-    },
-    {
-      icon: MousePointerClick,
-      gesture: '✊ Pugno chiuso',
-      action: 'Seleziona/Conferma',
-      description: 'Chiudi il pugno per selezionare'
+      gesture: '🤏 Pinch',
+      action: 'Espandi/Contrai sezione',
+      description: 'Avvicina pollice e indice per aprire/chiudere'
     },
     {
       icon: Move,
-      gesture: '👋 Swipe',
-      action: 'Sezione successiva',
-      description: 'Scorri velocemente a destra o sinistra'
+      gesture: '✋ Mano Aperta',
+      action: 'Seleziona sezione',
+      description: 'Muovi la mano su/giù per selezionare'
     }
   ]
 

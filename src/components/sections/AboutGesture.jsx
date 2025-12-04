@@ -29,6 +29,7 @@ function AboutGesture() {
   const containerRef = useRef(null)
   const lastPinchRef = useRef(false)
   const lastSwipeRef = useRef(null)
+  const lastThumbsNavRef = useRef(null)
 
   // Hand tracking
   const {
@@ -47,7 +48,9 @@ function AboutGesture() {
     palmPosition,
     isPinching,
     isSwipingLeft,
-    isSwipingRight
+    isSwipingRight,
+    isThumbsNavForward,
+    isThumbsNavBackward
   } = useGestureRecognition({ handData, enabled: gestureMode && isTracking })
 
   // Toggle gesture mode
@@ -97,6 +100,21 @@ function AboutGesture() {
       lastSwipeRef.current = null
     }
   }, [isSwipingLeft, isSwipingRight, gestureMode, isTracking])
+
+  // Handle thumbs-up navigation gesture (right-hand rule)
+  useEffect(() => {
+    if (!gestureMode || !isTracking) return
+
+    if (isThumbsNavForward && lastThumbsNavRef.current !== 'forward') {
+      setSelectedIndex(prev => Math.min(prev + 1, biography.sections.length - 1))
+      lastThumbsNavRef.current = 'forward'
+    } else if (isThumbsNavBackward && lastThumbsNavRef.current !== 'backward') {
+      setSelectedIndex(prev => Math.max(prev - 1, 0))
+      lastThumbsNavRef.current = 'backward'
+    } else if (!isThumbsNavForward && !isThumbsNavBackward) {
+      lastThumbsNavRef.current = null
+    }
+  }, [isThumbsNavForward, isThumbsNavBackward, gestureMode, isTracking])
 
   // Update selected index based on palm position (when not swiping)
   useEffect(() => {
