@@ -204,6 +204,18 @@ function AboutGesture() {
 
         {/* Main content area */}
         <div className="relative max-w-3xl mx-auto">
+          {/* Gesture overlay (when active) */}
+          {gestureMode && isTracking && (
+            <HandTrackingOverlay
+              handData={handData}
+              gesture={gesture}
+              isTracking={isTracking}
+              containerRef={containerRef}
+              videoElement={videoElement}
+              showWebcam={false}
+            />
+          )}
+
           {/* Profile photo placeholder */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
