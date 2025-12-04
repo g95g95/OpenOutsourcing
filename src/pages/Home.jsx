@@ -3,6 +3,7 @@ import Problem from '../components/sections/Problem'
 import Solution from '../components/sections/Solution'
 import OutsourcingQuiz from '../components/sections/OutsourcingQuiz'
 import Pricing from '../components/sections/Pricing'
+import AboutGesture from '../components/sections/AboutGesture'
 import ConsultationForm from '../components/forms/ConsultationForm'
 import contacts from '../data/contacts.json'
 
@@ -47,13 +48,8 @@ function Home() {
         </div>
       </section>
 
-      {/* About Section Placeholder */}
-      <section id="about" className="section-padding bg-white">
-        <div className="container-custom">
-          <h2 className="heading-2 text-center text-primary">Chi Sono</h2>
-          <p className="text-body text-center mt-4">Sezione in costruzione...</p>
-        </div>
-      </section>
+      {/* About Section with Gesture Control */}
+      <AboutGesture />
 
       {/* Pricing Section */}
       <Pricing />
