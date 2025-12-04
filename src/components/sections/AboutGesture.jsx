@@ -212,6 +212,7 @@ function AboutGesture() {
               isTracking={isTracking}
               containerRef={containerRef}
               videoElement={videoElement}
+              showWebcam={false}
             />
           )}
 
