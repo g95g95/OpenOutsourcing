@@ -187,4 +187,34 @@ src/
 ---
 
 ## Review
-(da compilare a fine implementazione)
+
+### Implementazione Completata: 2025-12-04
+
+#### File Creati:
+- `src/hooks/gesture/useHandTracking.js` - Hook per webcam + MediaPipe Hands
+- `src/hooks/gesture/useGestureRecognition.js` - Riconoscimento gesti (pinch, swipe, palm, fist)
+- `src/hooks/gesture/index.js` - Export hooks
+- `src/components/gesture/HandTrackingOverlay.jsx` - Canvas overlay con skeleton mano
+- `src/components/gesture/GestureCard.jsx` - Card interattive per biografia
+- `src/components/gesture/GestureInstructions.jsx` - Modal istruzioni primo accesso
+- `src/components/gesture/index.js` - Export componenti
+- `src/components/sections/AboutGesture.jsx` - Sezione principale con gesture control
+- `src/data/biography.json` - Contenuti biografia strutturati
+
+#### Funzionalità Implementate:
+- [x] Hand tracking con MediaPipe Hands (21 landmark points)
+- [x] Pinch gesture per expand/contract delle sezioni
+- [x] Swipe gesture per navigare tra le sezioni
+- [x] Palm position tracking per selezione sezione
+- [x] Overlay visivo con skeleton della mano
+- [x] Preview webcam nell'angolo (piccola, non invasiva)
+- [x] Toggle tra modalità gesture e normale
+- [x] Modal istruzioni al primo utilizzo
+- [x] Debounce per evitare jitter (200ms)
+- [x] Privacy: tutto il processing è client-side
+
+#### Note per Miglioramenti Futuri:
+- Aggiungere particle effects per dissolve/recompose più elaborato
+- Testare su Safari con HTTPS
+- Aggiungere detection per mobile e disabilitare automaticamente
+- Possibile ottimizzazione bundle size (MediaPipe è pesante)
