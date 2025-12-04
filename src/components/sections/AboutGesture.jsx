@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Hand, Eye, EyeOff, HelpCircle, Loader2, AlertCircle } from 'lucide-react'
+import { Hand, Eye, HelpCircle, Loader2, AlertCircle } from 'lucide-react'
 import { useHandTracking } from '../../hooks/gesture/useHandTracking'
 import { useGestureRecognition } from '../../hooks/gesture/useGestureRecognition'
-import HandTrackingOverlay from '../gesture/HandTrackingOverlay'
 import GestureCard from '../gesture/GestureCard'
 import GestureInstructions from '../gesture/GestureInstructions'
+import GestureFullscreen from '../gesture/GestureFullscreen'
 import biography from '../../data/biography.json'
 
 /**
@@ -204,18 +204,6 @@ function AboutGesture() {
 
         {/* Main content area */}
         <div className="relative max-w-3xl mx-auto">
-          {/* Gesture overlay (when active) */}
-          {gestureMode && isTracking && (
-            <HandTrackingOverlay
-              handData={handData}
-              gesture={gesture}
-              isTracking={isTracking}
-              containerRef={containerRef}
-              videoElement={videoElement}
-              showWebcam={false}
-            />
-          )}
-
           {/* Profile photo placeholder */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -255,28 +243,6 @@ function AboutGesture() {
             ))}
           </div>
 
-          {/* Gesture mode info */}
-          <AnimatePresence>
-            {gestureMode && isTracking && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                className="mt-8 text-center"
-              >
-                <p className="text-sm text-slate-500">
-                  Sezione {selectedIndex + 1} di {biography.sections.length} selezionata
-                </p>
-                <button
-                  onClick={() => setGestureMode(false)}
-                  className="mt-2 text-accent hover:text-accent/80 text-sm font-medium inline-flex items-center gap-1"
-                >
-                  <EyeOff className="w-4 h-4" />
-                  Torna alla visualizzazione normale
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </div>
 
@@ -284,6 +250,19 @@ function AboutGesture() {
       <GestureInstructions
         isVisible={showInstructions}
         onDismiss={() => setShowInstructions(false)}
+      />
+
+      {/* Fullscreen gesture experience */}
+      <GestureFullscreen
+        isActive={gestureMode && isTracking}
+        onClose={() => setGestureMode(false)}
+        sections={biography.sections}
+        selectedIndex={selectedIndex}
+        expandedSections={expandedSections}
+        palmPosition={palmPosition}
+        gesture={gesture}
+        isTracking={isTracking}
+        onToggleExpand={toggleExpand}
       />
     </section>
   )
