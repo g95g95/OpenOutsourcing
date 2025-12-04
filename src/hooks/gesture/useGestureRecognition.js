@@ -26,12 +26,24 @@ export function useGestureRecognition({ handData, enabled = true }) {
     return Math.sqrt(dx * dx + dy * dy + dz * dz)
   }, [])
 
-  // Check if finger is extended (tip is above base)
+  // Check if finger is extended (tip is above base or far from palm)
   const isFingerExtended = useCallback((landmarks, fingerBase, fingerTip) => {
     if (!landmarks || !landmarks[fingerBase] || !landmarks[fingerTip]) return false
-    // In MediaPipe, y increases downward, so extended finger has lower y
-    return landmarks[fingerTip].y < landmarks[fingerBase].y - 0.02
-  }, [])
+
+    // Check vertical extension (tip above base - for upright hand)
+    const verticallyExtended = landmarks[fingerTip].y < landmarks[fingerBase].y - 0.01
+
+    // Check horizontal extension (tip far from wrist - for pointing hand)
+    const wrist = landmarks[0]
+    if (wrist) {
+      const tipToWrist = calculateDistance(landmarks[fingerTip], wrist)
+      const baseToWrist = calculateDistance(landmarks[fingerBase], wrist)
+      const horizontallyExtended = tipToWrist > baseToWrist * 1.3
+      return verticallyExtended || horizontallyExtended
+    }
+
+    return verticallyExtended
+  }, [calculateDistance])
 
   // Detect pinch gesture (thumb and index close together)
   const detectPinch = useCallback((handData) => {
@@ -146,29 +158,26 @@ export function useGestureRecognition({ handData, enabled = true }) {
     return thumbExtended && fingersCurled
   }, [isFingerExtended, calculateDistance])
 
-  // Detect pointing navigation (fast movement with pointing index)
+  // Detect pointing navigation (movement with pointing index)
   const detectPointingNavigation = useCallback(() => {
     const history = historyRef.current
-    if (history.length < 5) return null
+    if (history.length < 3) return null // Reduced from 5 to 3 for faster response
 
     const now = Date.now()
     // Cooldown between navigation gestures
-    if (now - lastPointingNavTimeRef.current < 500) return null
+    if (now - lastPointingNavTimeRef.current < 400) return null // Reduced cooldown
 
-    const recent = history.slice(-5)
+    const recent = history.slice(-3)
     const oldest = recent[0]
     const newest = recent[recent.length - 1]
 
     const dx = newest.x - oldest.x
-    const timeDiff = newest.timestamp - oldest.timestamp
 
-    // Calculate horizontal velocity
-    const velocityX = dx / timeDiff * 1000
+    // Use distance-based detection instead of velocity
+    // Movement of ~8% screen width triggers navigation
+    const distanceThreshold = 0.08
 
-    // Threshold for fast movement
-    const navThreshold = 1.5
-
-    if (Math.abs(velocityX) > navThreshold) {
+    if (Math.abs(dx) > distanceThreshold) {
       lastPointingNavTimeRef.current = now
       // Any significant movement with pointing = forward navigation
       return 'pointing-nav-forward'
@@ -180,26 +189,23 @@ export function useGestureRecognition({ handData, enabled = true }) {
   // Detect thumb gesture navigation (movement with thumb extended)
   const detectThumbGestureNavigation = useCallback(() => {
     const history = historyRef.current
-    if (history.length < 5) return null
+    if (history.length < 3) return null // Reduced from 5 to 3 for faster response
 
     const now = Date.now()
     // Cooldown between navigation gestures
-    if (now - lastThumbGestureNavTimeRef.current < 500) return null
+    if (now - lastThumbGestureNavTimeRef.current < 400) return null // Reduced cooldown
 
-    const recent = history.slice(-5)
+    const recent = history.slice(-3)
     const oldest = recent[0]
     const newest = recent[recent.length - 1]
 
     const dx = newest.x - oldest.x
-    const timeDiff = newest.timestamp - oldest.timestamp
 
-    // Calculate horizontal velocity
-    const velocityX = dx / timeDiff * 1000
+    // Use distance-based detection instead of velocity
+    // Movement of ~8% screen width triggers navigation
+    const distanceThreshold = 0.08
 
-    // Threshold for fast movement
-    const navThreshold = 1.5
-
-    if (Math.abs(velocityX) > navThreshold) {
+    if (Math.abs(dx) > distanceThreshold) {
       lastThumbGestureNavTimeRef.current = now
       // Any significant movement with thumb = backward navigation
       return 'thumb-nav-backward'
@@ -306,7 +312,7 @@ export function useGestureRecognition({ handData, enabled = true }) {
     setPinchDistance(distance)
 
     // Detect gestures with debounce
-    const minGestureInterval = 200 // ms between gesture changes
+    const minGestureInterval = 100 // ms between gesture changes (reduced from 200)
 
     if (now - lastGestureTimeRef.current < minGestureInterval) {
       return
@@ -375,7 +381,7 @@ export function useGestureRecognition({ handData, enabled = true }) {
       setGesture(detectedGesture)
     }
 
-  }, [enabled, handData, detectPinch, detectOpenPalm, detectClosedFist, detectSwipe])
+  }, [enabled, handData, detectPinch, detectOpenPalm, detectClosedFist, detectSwipe, detectPointingIndex, detectThumbGesture, detectThumbsUp, detectPointingNavigation, detectThumbGestureNavigation, detectThumbsNavigation])
 
   // Clear state when disabled
   useEffect(() => {
