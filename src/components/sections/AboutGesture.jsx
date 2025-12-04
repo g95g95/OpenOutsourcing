@@ -6,6 +6,7 @@ import { useGestureRecognition } from '../../hooks/gesture/useGestureRecognition
 import GestureCard from '../gesture/GestureCard'
 import GestureInstructions from '../gesture/GestureInstructions'
 import GestureFullscreen from '../gesture/GestureFullscreen'
+import HandTrackingOverlay from '../gesture/HandTrackingOverlay'
 import biography from '../../data/biography.json'
 
 /**
