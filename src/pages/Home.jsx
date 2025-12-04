@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Mail, Phone, Linkedin } from 'lucide-react'
 import Problem from '../components/sections/Problem'
 import Solution from '../components/sections/Solution'
@@ -5,11 +6,20 @@ import OutsourcingQuiz from '../components/sections/OutsourcingQuiz'
 import Pricing from '../components/sections/Pricing'
 import AboutGesture from '../components/sections/AboutGesture'
 import ConsultationForm from '../components/forms/ConsultationForm'
+import SectionNav from '../components/ui/SectionNav'
 import contacts from '../data/contacts.json'
 
 function Home() {
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   return (
     <div className="pt-16">
+      {/* Section Navigation Dots */}
+      <SectionNav />
+
       {/* Hero Section Placeholder */}
       <section id="hero" className="section-padding gradient-mesh">
         <div className="container-custom text-center">
