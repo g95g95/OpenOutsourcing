@@ -75,6 +75,16 @@ function AboutGesture() {
     }
   }, [gestureMode, hasSeenInstructions])
 
+  // Safety cleanup: ensure scroll is always unlocked when gesture mode is disabled or component unmounts
+  useEffect(() => {
+    if (!gestureMode) {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [gestureMode])
+
   // Handle fist/palm transition for expand/contract
   useEffect(() => {
     if (!gestureMode || !isTracking) return
