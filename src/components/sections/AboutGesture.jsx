@@ -23,7 +23,7 @@ function AboutGesture() {
   const [expandedSections, setExpandedSections] = useState(
     biography.sections.reduce((acc, s) => ({ ...acc, [s.id]: s.expanded || false }), {})
   )
-  const [selectedIndex, setSelectedIndex] = useState(3) // Start from section 4 (index 3)
+  const [selectedIndex, setSelectedIndex] = useState(0) // Start from section 1 (index 0)
 
   // Refs
   const containerRef = useRef(null)
@@ -158,22 +158,11 @@ function AboutGesture() {
     }
   }, [isThumbNavBackward, gestureMode, isTracking])
 
-  // Update selected index based on palm position (when not swiping)
-  useEffect(() => {
-    if (!gestureMode || !isTracking || !palmPosition) return
-    if (gesture === 'swipe-left' || gesture === 'swipe-right') return
-
-    // Map vertical palm position to section index
-    const sectionCount = biography.sections.length
-    const newIndex = Math.min(
-      Math.floor(palmPosition.y * sectionCount * 1.5),
-      sectionCount - 1
-    )
-
-    if (newIndex >= 0 && newIndex !== selectedIndex) {
-      setSelectedIndex(newIndex)
-    }
-  }, [palmPosition, gestureMode, isTracking, selectedIndex, gesture])
+  // NOTE: Palm position navigation removed - it was conflicting with explicit gesture navigation
+  // Navigation is now handled exclusively by:
+  // - Pointing index + movement = forward
+  // - Thumb gesture + movement = backward
+  // - Fist/Palm toggle = expand/collapse
 
   // Toggle section expansion (for non-gesture mode)
   const toggleExpand = useCallback((sectionId) => {
