@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 
 /**
  * Hook for recognizing gestures from hand tracking data
- * Detects: pinch, open palm, closed fist, swipe
+ * Detects: pinch, open palm, closed fist, pointing index, thumb gesture, swipe
  */
 export function useGestureRecognition({ handData, enabled = true }) {
   const [gesture, setGesture] = useState(null)
@@ -13,6 +13,9 @@ export function useGestureRecognition({ handData, enabled = true }) {
   const lastGestureRef = useRef(null)
   const lastGestureTimeRef = useRef(0)
   const lastThumbsNavTimeRef = useRef(0)
+  const lastPointingNavTimeRef = useRef(0)
+  const lastThumbGestureNavTimeRef = useRef(0)
+  const lastFistPalmStateRef = useRef(null)
 
   // Calculate distance between two 3D points
   const calculateDistance = useCallback((p1, p2) => {
@@ -96,6 +99,114 @@ export function useGestureRecognition({ handData, enabled = true }) {
 
     return thumbPointingUp && fingersCurled
   }, [isFingerExtended])
+
+  // Detect pointing index gesture (index extended, other fingers curled)
+  const detectPointingIndex = useCallback((handData) => {
+    if (!handData?.landmarks) return false
+
+    const landmarks = handData.landmarks
+
+    // Index finger should be extended
+    const indexExtended = isFingerExtended(landmarks, 5, 8)
+
+    // All other fingers should be curled (closed fist)
+    const middleExtended = isFingerExtended(landmarks, 9, 12)
+    const ringExtended = isFingerExtended(landmarks, 13, 16)
+    const pinkyExtended = isFingerExtended(landmarks, 17, 20)
+
+    const otherFingersCurled = !middleExtended && !ringExtended && !pinkyExtended
+
+    return indexExtended && otherFingersCurled
+  }, [isFingerExtended])
+
+  // Detect thumb gesture (thumb extended, other fingers curled - for backward nav)
+  const detectThumbGesture = useCallback((handData) => {
+    if (!handData?.landmarks) return false
+
+    const landmarks = handData.landmarks
+
+    // Thumb should be extended (tip away from palm)
+    const thumbTip = landmarks[4]
+    const thumbBase = landmarks[2]
+    const indexBase = landmarks[5]
+
+    if (!thumbTip || !thumbBase || !indexBase) return false
+
+    // Thumb tip should be significantly away from index base (extended outward)
+    const thumbExtended = calculateDistance(thumbTip, indexBase) > 0.1
+
+    // All fingers should be curled (closed fist)
+    const indexExtended = isFingerExtended(landmarks, 5, 8)
+    const middleExtended = isFingerExtended(landmarks, 9, 12)
+    const ringExtended = isFingerExtended(landmarks, 13, 16)
+    const pinkyExtended = isFingerExtended(landmarks, 17, 20)
+
+    const fingersCurled = !indexExtended && !middleExtended && !ringExtended && !pinkyExtended
+
+    return thumbExtended && fingersCurled
+  }, [isFingerExtended, calculateDistance])
+
+  // Detect pointing navigation (fast movement with pointing index)
+  const detectPointingNavigation = useCallback(() => {
+    const history = historyRef.current
+    if (history.length < 5) return null
+
+    const now = Date.now()
+    // Cooldown between navigation gestures
+    if (now - lastPointingNavTimeRef.current < 500) return null
+
+    const recent = history.slice(-5)
+    const oldest = recent[0]
+    const newest = recent[recent.length - 1]
+
+    const dx = newest.x - oldest.x
+    const timeDiff = newest.timestamp - oldest.timestamp
+
+    // Calculate horizontal velocity
+    const velocityX = dx / timeDiff * 1000
+
+    // Threshold for fast movement
+    const navThreshold = 1.5
+
+    if (Math.abs(velocityX) > navThreshold) {
+      lastPointingNavTimeRef.current = now
+      // Any significant movement with pointing = forward navigation
+      return 'pointing-nav-forward'
+    }
+
+    return null
+  }, [])
+
+  // Detect thumb gesture navigation (movement with thumb extended)
+  const detectThumbGestureNavigation = useCallback(() => {
+    const history = historyRef.current
+    if (history.length < 5) return null
+
+    const now = Date.now()
+    // Cooldown between navigation gestures
+    if (now - lastThumbGestureNavTimeRef.current < 500) return null
+
+    const recent = history.slice(-5)
+    const oldest = recent[0]
+    const newest = recent[recent.length - 1]
+
+    const dx = newest.x - oldest.x
+    const timeDiff = newest.timestamp - oldest.timestamp
+
+    // Calculate horizontal velocity
+    const velocityX = dx / timeDiff * 1000
+
+    // Threshold for fast movement
+    const navThreshold = 1.5
+
+    if (Math.abs(velocityX) > navThreshold) {
+      lastThumbGestureNavTimeRef.current = now
+      // Any significant movement with thumb = backward navigation
+      return 'thumb-nav-backward'
+    }
+
+    return null
+  }, [])
 
   // Detect thumbs-up navigation (fast horizontal movement with thumbs-up)
   const detectThumbsNavigation = useCallback(() => {
@@ -205,6 +316,24 @@ export function useGestureRecognition({ handData, enabled = true }) {
 
     if (isPinching) {
       detectedGesture = 'pinch'
+    } else if (detectPointingIndex(handData)) {
+      // Check for pointing navigation (index extended + movement = forward)
+      const pointingNav = detectPointingNavigation()
+      if (pointingNav) {
+        detectedGesture = pointingNav
+        historyRef.current = [] // Clear history after navigation
+      } else {
+        detectedGesture = 'pointing-index'
+      }
+    } else if (detectThumbGesture(handData)) {
+      // Check for thumb gesture navigation (thumb extended + movement = backward)
+      const thumbGestureNav = detectThumbGestureNavigation()
+      if (thumbGestureNav) {
+        detectedGesture = thumbGestureNav
+        historyRef.current = [] // Clear history after navigation
+      } else {
+        detectedGesture = 'thumb-gesture'
+      }
     } else if (detectThumbsUp(handData)) {
       // Check for thumbs-up navigation (fast movement with thumb up)
       const thumbsNav = detectThumbsNavigation()
@@ -216,6 +345,11 @@ export function useGestureRecognition({ handData, enabled = true }) {
       }
     } else if (detectClosedFist(handData)) {
       detectedGesture = 'fist'
+      // Track fist/palm transitions for expand/collapse
+      if (lastFistPalmStateRef.current === 'palm') {
+        detectedGesture = 'fist-from-palm' // Transition: palm -> fist
+      }
+      lastFistPalmStateRef.current = 'fist'
     } else if (detectOpenPalm(handData)) {
       // Check for swipe while palm is open
       const swipe = detectSwipe()
@@ -223,7 +357,13 @@ export function useGestureRecognition({ handData, enabled = true }) {
         detectedGesture = swipe
         historyRef.current = [] // Clear history after swipe
       } else {
-        detectedGesture = 'palm'
+        // Track fist/palm transitions for expand/collapse
+        if (lastFistPalmStateRef.current === 'fist') {
+          detectedGesture = 'palm-from-fist' // Transition: fist -> palm
+        } else {
+          detectedGesture = 'palm'
+        }
+        lastFistPalmStateRef.current = 'palm'
       }
     } else {
       detectedGesture = 'pointing'
@@ -252,13 +392,21 @@ export function useGestureRecognition({ handData, enabled = true }) {
     pinchDistance,
     palmPosition,
     isPinching: gesture === 'pinch',
-    isOpenPalm: gesture === 'palm',
-    isClosedFist: gesture === 'fist',
+    isOpenPalm: gesture === 'palm' || gesture === 'palm-from-fist',
+    isClosedFist: gesture === 'fist' || gesture === 'fist-from-palm',
     isSwipingLeft: gesture === 'swipe-left',
     isSwipingRight: gesture === 'swipe-right',
     isThumbsUp: gesture === 'thumbs-up',
     isThumbsNavForward: gesture === 'thumbs-nav-forward',
-    isThumbsNavBackward: gesture === 'thumbs-nav-backward'
+    isThumbsNavBackward: gesture === 'thumbs-nav-backward',
+    // New gestures for navigation
+    isPointingIndex: gesture === 'pointing-index',
+    isPointingNavForward: gesture === 'pointing-nav-forward',
+    isThumbGesture: gesture === 'thumb-gesture',
+    isThumbNavBackward: gesture === 'thumb-nav-backward',
+    // Fist/Palm transitions for expand/collapse
+    isFistFromPalm: gesture === 'fist-from-palm',
+    isPalmFromFist: gesture === 'palm-from-fist'
   }
 }
 

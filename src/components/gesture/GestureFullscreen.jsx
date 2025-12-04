@@ -169,11 +169,14 @@ function GestureFullscreen({
                     animate={{ opacity: 1, y: 0 }}
                     className="absolute top-full left-1/2 -translate-x-1/2 mt-2 px-3 py-1 bg-accent text-white text-xs font-medium rounded-full whitespace-nowrap"
                   >
-                    {gesture === 'pinch' ? 'Espandi/Chiudi' :
-                     gesture === 'palm' ? 'Naviga' :
-                     gesture === 'thumbs-up' ? '👍 Muovi veloce!' :
-                     gesture === 'thumbs-nav-forward' ? '👍 Avanti →' :
-                     gesture === 'thumbs-nav-backward' ? '← Indietro 👍' :
+                    {gesture === 'fist-from-palm' || gesture === 'palm-from-fist' ? '✊↔️✋ Toggle' :
+                     gesture === 'palm' ? '✋ Mano aperta' :
+                     gesture === 'fist' ? '✊ Pugno chiuso' :
+                     gesture === 'pointing-index' ? '☝️ Muovi per avanzare!' :
+                     gesture === 'pointing-nav-forward' ? '☝️ Avanti →' :
+                     gesture === 'thumb-gesture' ? '👍 Muovi per tornare!' :
+                     gesture === 'thumb-nav-backward' ? '← Indietro 👍' :
+                     gesture === 'thumbs-up' ? '👍 Pollice su' :
                      gesture}
                   </motion.div>
                 )}
@@ -308,7 +311,7 @@ function GestureFullscreen({
               transition={{ delay: 4, duration: 1 }}
               className="absolute top-6 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm rounded-lg px-6 py-3 text-white text-sm text-center"
             >
-              👍 Pollice in su + movimento veloce per navigare • Pinch per espandere • ESC per uscire
+              ☝️ Indice + movimento = Avanti • 👍 Pollice + movimento = Indietro • ✊↔️✋ Pugno/Mano aperta = Espandi • ESC per uscire
             </motion.div>
           )}
         </motion.div>

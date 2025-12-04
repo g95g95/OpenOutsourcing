@@ -8,21 +8,21 @@ function GestureInstructions({ isVisible, onDismiss }) {
   const instructions = [
     {
       icon: Hand,
-      gesture: '👍 Pollice in su',
-      action: 'Naviga tra le sezioni',
-      description: 'Pugno chiuso + pollice in alto, muovi veloce avanti/indietro'
+      gesture: '☝️ Indice esteso',
+      action: 'Avanza di sezione',
+      description: 'Indice esteso + pugno chiuso, muovi la mano'
+    },
+    {
+      icon: Hand,
+      gesture: '👍 Pollice esteso',
+      action: 'Torna indietro',
+      description: 'Pollice esteso + pugno chiuso, muovi la mano'
     },
     {
       icon: Maximize2,
-      gesture: '🤏 Pinch',
+      gesture: '✊↔️✋ Pugno/Mano',
       action: 'Espandi/Contrai sezione',
-      description: 'Avvicina pollice e indice per aprire/chiudere'
-    },
-    {
-      icon: Move,
-      gesture: '✋ Mano Aperta',
-      action: 'Seleziona sezione',
-      description: 'Muovi la mano su/giù per selezionare'
+      description: 'Alterna tra pugno chiuso e mano aperta'
     }
   ]
 

@@ -23,13 +23,16 @@ function AboutGesture() {
   const [expandedSections, setExpandedSections] = useState(
     biography.sections.reduce((acc, s) => ({ ...acc, [s.id]: s.expanded || false }), {})
   )
-  const [selectedIndex, setSelectedIndex] = useState(0)
+  const [selectedIndex, setSelectedIndex] = useState(3) // Start from section 4 (index 3)
 
   // Refs
   const containerRef = useRef(null)
   const lastPinchRef = useRef(false)
   const lastSwipeRef = useRef(null)
   const lastThumbsNavRef = useRef(null)
+  const lastPointingNavRef = useRef(null)
+  const lastThumbNavRef = useRef(null)
+  const lastFistPalmToggleRef = useRef(false)
 
   // Hand tracking
   const {
@@ -50,7 +53,11 @@ function AboutGesture() {
     isSwipingLeft,
     isSwipingRight,
     isThumbsNavForward,
-    isThumbsNavBackward
+    isThumbsNavBackward,
+    isPointingNavForward,
+    isThumbNavBackward,
+    isFistFromPalm,
+    isPalmFromFist
   } = useGestureRecognition({ handData, enabled: gestureMode && isTracking })
 
   // Toggle gesture mode
@@ -68,12 +75,13 @@ function AboutGesture() {
     }
   }, [gestureMode, hasSeenInstructions])
 
-  // Handle pinch gesture for expand/contract
+  // Handle fist/palm transition for expand/contract
   useEffect(() => {
     if (!gestureMode || !isTracking) return
 
-    // Detect pinch start (transition from not pinching to pinching)
-    if (isPinching && !lastPinchRef.current) {
+    // Detect fist→palm or palm→fist transition
+    const isToggling = isFistFromPalm || isPalmFromFist
+    if (isToggling && !lastFistPalmToggleRef.current) {
       const currentSection = biography.sections[selectedIndex]
       if (currentSection) {
         setExpandedSections(prev => ({
@@ -83,8 +91,8 @@ function AboutGesture() {
       }
     }
 
-    lastPinchRef.current = isPinching
-  }, [isPinching, gestureMode, isTracking, selectedIndex])
+    lastFistPalmToggleRef.current = isToggling
+  }, [isFistFromPalm, isPalmFromFist, gestureMode, isTracking, selectedIndex])
 
   // Handle swipe gesture for navigation
   useEffect(() => {
@@ -101,7 +109,7 @@ function AboutGesture() {
     }
   }, [isSwipingLeft, isSwipingRight, gestureMode, isTracking])
 
-  // Handle thumbs-up navigation gesture (right-hand rule)
+  // Handle thumbs-up navigation gesture (right-hand rule) - keeping as backup
   useEffect(() => {
     if (!gestureMode || !isTracking) return
 
@@ -115,6 +123,30 @@ function AboutGesture() {
       lastThumbsNavRef.current = null
     }
   }, [isThumbsNavForward, isThumbsNavBackward, gestureMode, isTracking])
+
+  // Handle pointing index navigation (index extended + movement = forward)
+  useEffect(() => {
+    if (!gestureMode || !isTracking) return
+
+    if (isPointingNavForward && lastPointingNavRef.current !== 'forward') {
+      setSelectedIndex(prev => Math.min(prev + 1, biography.sections.length - 1))
+      lastPointingNavRef.current = 'forward'
+    } else if (!isPointingNavForward) {
+      lastPointingNavRef.current = null
+    }
+  }, [isPointingNavForward, gestureMode, isTracking])
+
+  // Handle thumb gesture navigation (thumb extended + movement = backward)
+  useEffect(() => {
+    if (!gestureMode || !isTracking) return
+
+    if (isThumbNavBackward && lastThumbNavRef.current !== 'backward') {
+      setSelectedIndex(prev => Math.max(prev - 1, 0))
+      lastThumbNavRef.current = 'backward'
+    } else if (!isThumbNavBackward) {
+      lastThumbNavRef.current = null
+    }
+  }, [isThumbNavBackward, gestureMode, isTracking])
 
   // Update selected index based on palm position (when not swiping)
   useEffect(() => {
