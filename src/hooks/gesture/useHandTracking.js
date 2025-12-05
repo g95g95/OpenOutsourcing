@@ -1,6 +1,31 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Hands } from '@mediapipe/hands'
-import { Camera } from '@mediapipe/camera_utils'
+
+// Load MediaPipe from CDN dynamically (doesn't work well with bundlers)
+const loadMediaPipeScript = (url) => {
+  return new Promise((resolve, reject) => {
+    // Check if already loaded
+    if (url.includes('hands') && window.Hands) {
+      resolve()
+      return
+    }
+    if (url.includes('camera_utils') && window.Camera) {
+      resolve()
+      return
+    }
+
+    const script = document.createElement('script')
+    script.src = url
+    script.crossOrigin = 'anonymous'
+    script.onload = resolve
+    script.onerror = reject
+    document.head.appendChild(script)
+  })
+}
+
+const loadMediaPipe = async () => {
+  await loadMediaPipeScript('https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js')
+  await loadMediaPipeScript('https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js')
+}
 
 /**
  * Hook for hand tracking using MediaPipe Hands
@@ -11,11 +36,19 @@ export function useHandTracking({ enabled = false, onResults = null }) {
   const [isTracking, setIsTracking] = useState(false)
   const [error, setError] = useState(null)
   const [handData, setHandData] = useState(null)
+  const [mediaLoaded, setMediaLoaded] = useState(false)
 
   const videoRef = useRef(null)
   const handsRef = useRef(null)
   const cameraRef = useRef(null)
   const streamRef = useRef(null)
+
+  // Load MediaPipe scripts on mount
+  useEffect(() => {
+    loadMediaPipe()
+      .then(() => setMediaLoaded(true))
+      .catch(err => console.error('Failed to load MediaPipe:', err))
+  }, [])
 
   // Process MediaPipe results
   const processResults = useCallback((results) => {
@@ -58,7 +91,8 @@ export function useHandTracking({ enabled = false, onResults = null }) {
   const initializeHands = useCallback(async () => {
     if (handsRef.current) return
 
-    const hands = new Hands({
+    // Use window.Hands from CDN script
+    const hands = new window.Hands({
       locateFile: (file) => {
         return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
       }
@@ -80,6 +114,12 @@ export function useHandTracking({ enabled = false, onResults = null }) {
   // Start tracking
   const startTracking = useCallback(async () => {
     if (isTracking || isLoading) return
+
+    // Wait for MediaPipe to load
+    if (!window.Hands || !window.Camera) {
+      setError('MediaPipe not loaded yet. Please try again.')
+      return
+    }
 
     setIsLoading(true)
     setError(null)
@@ -108,8 +148,8 @@ export function useHandTracking({ enabled = false, onResults = null }) {
       // Initialize hands
       await initializeHands()
 
-      // Start camera processing
-      const camera = new Camera(videoRef.current, {
+      // Start camera processing (use window.Camera from CDN)
+      const camera = new window.Camera(videoRef.current, {
         onFrame: async () => {
           if (handsRef.current && videoRef.current) {
             await handsRef.current.send({ image: videoRef.current })
@@ -175,6 +215,7 @@ export function useHandTracking({ enabled = false, onResults = null }) {
     isTracking,
     error,
     handData,
+    mediaLoaded,
     videoElement: videoRef.current,
     startTracking,
     stopTracking
