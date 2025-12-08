@@ -24,8 +24,8 @@ function Home() {
       <section id="hero" className="section-padding gradient-mesh">
         <div className="container-custom text-center">
           <h1 className="heading-1 text-primary">
-            Le aziende bruciano milioni in outsourcing inutile.
-            <span className="text-accent"> Io li fermo.</span>
+            Riporta le competenze in azienda
+            <span className="text-accent"> e liberati degli esterni.</span>
           </h1>
           <p className="text-body mt-6 max-w-2xl mx-auto">
             Sostituisco consulenti esterni con AI Agents. Primo consulto gratis. Paghi solo se risparmi.
