@@ -24,11 +24,11 @@ function Home() {
       <section id="hero" className="section-padding gradient-mesh">
         <div className="container-custom text-center">
           <h1 className="heading-1 text-primary">
-            Le aziende bruciano milioni in outsourcing inutile.
-            <span className="text-accent"> Io li fermo.</span>
+            Riporta le competenze in azienda
+            <span className="text-accent"> e liberati degli esterni.</span>
           </h1>
           <p className="text-body mt-6 max-w-2xl mx-auto">
-            Sostituisco consulenti esterni con AI Agents. Primo consulto gratis. Paghi solo se risparmi.
+            Aiuto a liberarsi da onerosi fornitori esterni, riducendo i costi e consentendo alle competenze di non uscire dall'azienda.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
             <a href="#contact" className="bg-accent hover:bg-accent-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
